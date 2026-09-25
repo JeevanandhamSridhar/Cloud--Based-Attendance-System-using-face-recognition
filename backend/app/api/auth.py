@@ -48,7 +48,7 @@ def login(login_data: UserLogin, db: Session = Depends(get_db)):
             user = User(
                 email="faculty@college.edu",
                 password_hash=get_password_hash("Password123!"),
-                full_name="Prof. Jeevanandham",
+                full_name="Dr. Alexander Reed (Faculty Admin)",
                 role="faculty",
             )
             db.add(user)

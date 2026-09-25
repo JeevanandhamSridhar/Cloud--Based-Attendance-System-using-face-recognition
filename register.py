@@ -48,7 +48,7 @@ def main():
         print("[Error] Student ID cannot be empty.")
         return
 
-    name = input("Enter Student Name (e.g., Jeevanandham S): ").strip()
+    name = input("Enter Student Name (e.g., Alex Johnson): ").strip()
     if not name:
         print("[Error] Student Name cannot be empty.")
         return

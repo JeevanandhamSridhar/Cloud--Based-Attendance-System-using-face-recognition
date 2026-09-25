@@ -152,7 +152,7 @@ def create_full_report():
     r_by = p_author.add_run("Submitted by:\n")
     r_by.font.name = "Calibri"
     r_by.font.size = Pt(11)
-    r_name = p_author.add_run("JEEVANANDHAM S\n")
+    r_name = p_author.add_run("FINAL YEAR PROJECT CANDIDATE\n")
     r_name.bold = True
     r_name.font.name = "Calibri"
     r_name.font.size = Pt(14)
@@ -178,7 +178,7 @@ def create_full_report():
     h_cert = doc.add_heading("BONAFIDE CERTIFICATE", level=1)
     style_heading(h_cert, font_size=15, color_rgb=(0x1E, 0x3A, 0x8A))
     
-    add_body_p(doc, "This is to certify that this project report entitled \"Cloud-Based Smart Attendance System Using Facial Recognition, Presentation Attack Detection, Continuous Presence Validation, and Dual-Tier Truancy Analytics\" is the bonafide work of JEEVANANDHAM S, who carried out the project work under academic supervision and guidance.")
+    add_body_p(doc, "This is to certify that this project report entitled \"Cloud-Based Smart Attendance System Using Facial Recognition, Presentation Attack Detection, Continuous Presence Validation, and Dual-Tier Truancy Analytics\" is the bonafide work of the Final Year Student Candidate, who carried out the project work under academic supervision and guidance.")
     add_body_p(doc, "The results embodied in this report have been thoroughly investigated, validated through automated unit test suites, evaluated against published benchmarks, and have not been submitted to any other university or institute for the award of any degree or diploma.")
     
     doc.add_paragraph().paragraph_format.space_after = Pt(40)

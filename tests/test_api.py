@@ -22,7 +22,7 @@ def setup_and_teardown_db():
         user = User(
             email="faculty@college.edu",
             password_hash=get_password_hash("Password123!"),
-            full_name="Prof. Jeevanandham",
+            full_name="Dr. Alexander Reed",
             role="faculty",
         )
         db.add(user)
@@ -30,20 +30,33 @@ def setup_and_teardown_db():
     finally:
         db.close()
     yield
-    # At teardown, ensure default faculty is preserved
+    # At teardown, ensure clean DB with default faculty, CS301, and zero students
     db = SessionLocal()
     try:
-        if not db.query(User).filter(User.email == "faculty@college.edu").first():
+        db.query(Student).delete()
+        db.commit()
+        user = db.query(User).filter(User.email == "faculty@college.edu").first()
+        if not user:
             user = User(
                 email="faculty@college.edu",
                 password_hash=get_password_hash("Password123!"),
-                full_name="Prof. Jeevanandham",
+                full_name="Dr. Alexander Reed",
                 role="faculty",
             )
             db.add(user)
             db.commit()
+            db.refresh(user)
+        if not db.query(Subject).filter(Subject.code == "CS301").first():
+            subj = Subject(code="CS301", name="Data Structures & Algorithms", department="Computer Science", faculty_id=user.id)
+            db.add(subj)
+            db.commit()
     finally:
         db.close()
+    try:
+        with open("data/embeddings.json", "w", encoding="utf-8") as ef:
+            ef.write("{}\n")
+    except Exception:
+        pass
 
 
 def test_health_and_root():
@@ -137,6 +150,25 @@ def test_student_management_and_embedding_enrollment():
     get_res = client.get(f"/api/students/{student['id']}", headers=headers)
     assert get_res.status_code == 200
     assert get_res.json()["has_face_registered"] is True
+
+    # 4. Delete the student and verify permanent removal
+    del_res = client.delete(f"/api/students/{student['id']}", headers=headers)
+    assert del_res.status_code == 200
+    assert del_res.json()["success"] is True
+
+    # 5. Verify student is 404 Not Found and not listed
+    check_del = client.get(f"/api/students/{student['id']}", headers=headers)
+    assert check_del.status_code == 404
+
+    list_res = client.get("/api/students", headers=headers)
+    assert list_res.status_code == 200
+    assert all(s["student_id"] != "23CS101" for s in list_res.json())
+
+    # 6. Verify matcher and embeddings.json no longer contain the student
+    from core.matcher import FaceMatcher
+    matcher = FaceMatcher()
+    assert "23CS101" not in matcher.students
+
 
 
 def test_session_lifecycle_and_attendance_flow():

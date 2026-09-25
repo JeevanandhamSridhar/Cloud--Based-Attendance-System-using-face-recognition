@@ -341,7 +341,7 @@ export default function StudentsPage() {
                   <label className="block text-slate-300 font-semibold mb-1">Full Name *</label>
                   <input
                     type="text"
-                    placeholder="e.g., Jeevanandham S"
+                    placeholder="e.g., Alex Johnson / Priya Sharma"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required

@@ -88,6 +88,40 @@ class FaceMatcher:
         self.load_database()
         return True
 
+    def delete_student(self, student_id: str) -> bool:
+        """
+        Removes a student and their face embedding from both in-memory cache
+        and local data/embeddings.json persistence so they are never reloaded.
+        """
+        # Remove from memory
+        keys_to_delete = [
+            k for k, v in self.students.items()
+            if k == student_id or (isinstance(v, dict) and v.get("student_id") == student_id)
+        ]
+        for k in keys_to_delete:
+            self.students.pop(k, None)
+
+        # Remove from JSON file
+        if os.path.exists(self.db_path):
+            try:
+                with open(self.db_path, "r", encoding="utf-8") as f:
+                    existing = json.load(f)
+                json_keys = [
+                    k for k, v in existing.items()
+                    if k == student_id or (isinstance(v, dict) and v.get("student_id") == student_id)
+                ]
+                if json_keys:
+                    for k in json_keys:
+                        existing.pop(k, None)
+                    with open(self.db_path, "w", encoding="utf-8") as f:
+                        json.dump(existing, f, indent=2)
+            except Exception as e:
+                print(f"[Matcher] Error removing {student_id} from {self.db_path}: {e}")
+
+        # Reload cache
+        self.load_database()
+        return True
+
     def match(
         self, query_embedding: np.ndarray
     ) -> Tuple[Optional[str], Optional[str], float, bool]:

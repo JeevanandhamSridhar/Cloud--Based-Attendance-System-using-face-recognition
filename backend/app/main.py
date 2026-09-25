@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
             user = User(
                 email=default_email,
                 password_hash=get_password_hash("Password123!"),
-                full_name="Prof. Jeevanandham",
+                full_name="Dr. Alexander Reed (Faculty Admin)",
                 role="faculty",
             )
             db.add(user)
@@ -48,42 +48,7 @@ async def lifespan(app: FastAPI):
             db.commit()
             print("[Startup] Seeded default course: CS301 - Data Structures & Algorithms")
 
-        # 3. Synchronize any existing Phase 1 embeddings from data/embeddings.json
-        embeddings_file = os.path.join("data", "embeddings.json")
-        if os.path.exists(embeddings_file):
-            try:
-                with open(embeddings_file, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    for sid, record in data.items():
-                        student = db.query(Student).filter(Student.student_id == sid).first()
-                        if not student:
-                            student = Student(
-                                student_id=sid,
-                                name=record.get("name", "Student"),
-                                department=record.get("department", "Computer Science"),
-                                year=3,
-                                section="A",
-                            )
-                            db.add(student)
-                            db.commit()
-                            db.refresh(student)
-
-                        has_emb = (
-                            db.query(FaceEmbedding)
-                            .filter(FaceEmbedding.student_id == student.id)
-                            .first()
-                        )
-                        if not has_emb and "embedding" in record:
-                            face_rec = FaceEmbedding(
-                                student_id=student.id,
-                                embedding_json=json.dumps(record["embedding"]),
-                                model_version=record.get("model", "ArcFace_buffalo_sc_512"),
-                            )
-                            db.add(face_rec)
-                            db.commit()
-                            print(f"[Startup] Synced Phase 1 face vector for {student.name} ({sid})")
-            except Exception as e:
-                print(f"[Startup] Error syncing Phase 1 embeddings: {e}")
+        # User manages student data from scratch - zero auto-seeding
 
     finally:
         db.close()
@@ -121,7 +86,7 @@ def root():
         "version": settings.VERSION,
         "status": "online",
         "docs_url": "/docs",
-        "author": "Jeevanandham S",
+        "author": "Smart Attendance Research Group",
     }
 
 

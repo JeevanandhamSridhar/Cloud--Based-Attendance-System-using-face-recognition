@@ -2,7 +2,7 @@
 
 **Academic Project & Thesis Documentation Guide**  
 **Degree:** Bachelor of Science (B.Sc.) in Computer Science  
-**Author / Candidate:** Jeevanandham S  
+**Author / Candidate:** Final Year Project Candidate  
 **Academic Year:** 2025–2026  
 
 ---
@@ -31,7 +31,7 @@ This project implements a complete, enterprise-grade, privacy-first **Cloud-Base
 
 ## 2. Research Paper Comparative Analysis Matrix
 
-| Feature / Metric | Traditional OpenCV / LBPH (Patil et al., 2018) | DeepFace / Dlib CNN (Arsenovic et al., 2019) | AttenFace Baseline (Rao et al., IEEE CICT 2022) | **Our Standalone Project (Jeevanandham S, 2026)** |
+| Feature / Metric | Traditional OpenCV / LBPH (Patil et al., 2018) | DeepFace / Dlib CNN (Arsenovic et al., 2019) | AttenFace Baseline (Rao et al., IEEE CICT 2022) | **Our Standalone Project (Final Year System, 2026)** |
 | :--- | :--- | :--- | :--- | :--- |
 | **Detection Algorithm** | Haar Cascade (Brittle) | HOG / CNN (Slow on CPU) | MTCNN | **SCRFD MobileFaceNet (Real-time CPU Optimized)** |
 | **Embedding Vector** | Pixel Histogram (128-D) | Euclidean 128-D | Triplet Loss (128-D) | **ArcFace Additive Angular Margin 512-D Vector** |
@@ -135,7 +135,7 @@ sequenceDiagram
     Fast->>DB: Insert AttendanceEvent & compute AttenFace presence
     Fast-->>React: Return JSON (bbox, student_name, status, vis_score)
     React->>React: Draw upright Left-to-Right bounding box (Cyan if Kerchief, Green if Live)
-    React-->>Student: Instant HUD feedback ("Jeevanandham S (92%) - MASK/KERCHIEF - LIVE")
+    React-->>Student: Instant HUD feedback ("Priya Sharma (92%) - MASK/KERCHIEF - LIVE")
 ```
 
 ---

@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 import numpy as np
 import cv2
 from typing import List
@@ -7,7 +8,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from backend.app.database import get_db
-from backend.app.models import FaceEmbedding, Student, User
+from backend.app.models import (
+    Attendance,
+    AttendanceEvent,
+    DailyCampusAttendance,
+    FaceEmbedding,
+    Student,
+    User,
+)
 from backend.app.schemas import EnrollFaceRequest, StudentCreate, StudentResponse
 from backend.app.security import require_faculty_or_admin
 from core.face_engine import FaceEngine
@@ -235,6 +243,34 @@ def delete_student(
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 
+    st_name = student.name
+    st_code = student.student_id
+    st_uuid = student.id
+
+    # 1. Clean up dependent records explicitly to guarantee integrity across SQLite & PostgreSQL
+    db.query(AttendanceEvent).filter(AttendanceEvent.student_id == st_uuid).delete()
+    db.query(DailyCampusAttendance).filter(DailyCampusAttendance.student_id == st_uuid).delete()
+    db.query(Attendance).filter(Attendance.student_id == st_uuid).delete()
+    db.query(FaceEmbedding).filter(FaceEmbedding.student_id == st_uuid).delete()
     db.delete(student)
     db.commit()
-    return {"success": True, "message": f"Student '{student.name}' removed successfully."}
+
+    # 2. Purge from FaceMatcher in-memory cache and data/embeddings.json so it never reappears on restart!
+    try:
+        matcher = FaceMatcher()
+        matcher.delete_student(st_code)
+        matcher.delete_student(st_uuid)
+    except Exception as e:
+        print(f"[Delete] Warning while clearing matcher: {e}")
+
+    # 3. Clean up any local face crop if exists
+    for ext in [".jpg", ".png", ".jpeg"]:
+        face_path = os.path.join("data", "faces", f"{st_code}{ext}")
+        if os.path.exists(face_path):
+            try:
+                os.remove(face_path)
+            except Exception:
+                pass
+
+    return {"success": True, "message": f"Student '{st_name}' permanently removed from system."}
+

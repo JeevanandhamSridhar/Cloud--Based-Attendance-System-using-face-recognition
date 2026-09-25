@@ -200,7 +200,7 @@ export default function App() {
               className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center justify-center space-x-1.5 mx-auto py-1 px-3 rounded-lg hover:bg-emerald-500/10 transition"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Demo Faculty Quick-Login (Prof. Jeevanandham)</span>
+              <span>Demo Faculty Quick-Login (faculty@college.edu)</span>
             </button>
           </div>
         </div>
