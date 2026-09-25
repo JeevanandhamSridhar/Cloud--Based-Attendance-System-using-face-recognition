@@ -60,3 +60,9 @@ desktop.ini
 data/faces/*.jpg
 data/faces/*.png
 !data/faces/.gitkeep
+
+# Generated Large Report Binaries
+reports_export/*.docx
+reports_export/*.pdf
+reports_export/figures/
+
